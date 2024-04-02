@@ -31,17 +31,14 @@ data {
   array[Nsubjects, Ntrials] int<lower=0> selected_offer;
 
   array[Nsubjects, Ntrials] int<lower=0> first_trial_in_block;
+  array[Nsubjects, Ntrials] real<lower=0> brightness1;
+  array[Nsubjects, Ntrials] real<lower=0> brightness2;
 
 }
 
 transformed data {
 
   int<lower=1> Nparameters = 1;
-
-  vector[Narms] brightness_initial;
-
-  brightness_initial = rep_vector(0, Narms);
-  brightness_initial[Narms] = 0.6;
 
 }
 
@@ -66,31 +63,12 @@ transformed parameters {
   vector[Nsubjects] beta;
 
   matrix[Ntrials, Nsubjects] p_ch_action;
-
-  matrix[Ntrials, Nsubjects] brightnessDiff_external;
-
-  matrix[Ntrials, Nsubjects] brightness1_external;
-
-  matrix[Ntrials, Nsubjects] brightness2_external;
-
-  matrix[Ntrials, Nsubjects] PE_external;
-
   
 
   //RL
 
   for (subject in 1 : Nsubjects) {
-
-    //internal variabels
-
-    real brightnessDiff;
-
-    real PE;
-
-    array[Narms] real brightness;
-
     
-
     //set indvidual parameters
 
     beta[subject] = (population_locations[1]
@@ -103,31 +81,8 @@ transformed parameters {
 
     for (trial in 1 : Ntrials_per_subject[subject]) {
 
-      //reset Qvalues (first trial only)
-
-      if (first_trial_in_block[subject, trial] == 1) {
-
-        brightness = rep_array(0, Narms);
-        brightness[Narms] = 0.6;
-
-      }
-
-  //calculate probability for each action
-
-      brightnessDiff = brightness[offer2[subject, trial]] - brightness[offer1[subject, trial]];
-
+      p_ch_action[trial, subject] = inv_logit(beta[subject] *(brightness2[subject,trial] - brightness1[subject,trial]));
       
-
-      p_ch_action[trial, subject] = inv_logit(beta[subject] * brightnessDiff);
-      
-
-      //appened to external variabels
-
-      brightnessDiff_external[trial, subject] = brightnessDiff;
-
-      brightness1_external[trial, subject] = brightness[1];
-
-      brightness2_external[trial, subject] = brightness[2];
 
     }
 
@@ -157,7 +112,7 @@ model {
 
       target += bernoulli_logit_lpmf(selected_offer[subject, trial] | beta[subject]
 
-                                                                    * brightnessDiff_external[trial, subject]);
+                                                                    * (brightness2[subject,trial] - brightness1[subject,trial]));
 
     }
 

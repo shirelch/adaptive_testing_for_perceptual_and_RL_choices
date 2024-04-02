@@ -1,4 +1,4 @@
-#### simulate Rescorla-Wagner block for participant ----
+#task similar to https://www.pnas.org/doi/pdf/10.1073/pnas.2002903117
 sim.block = function(subject, parameters, cfg) {
   print(paste('subject', subject))
   
@@ -30,9 +30,9 @@ sim.block = function(subject, parameters, cfg) {
     for (trial in 1:Ntrials_perblock) {
       # Update staircase
       if (correct_responses == 3) {
-        brightness[2] = brightness[1] - step_size
+        brightness[2] = brightness[2] - step_size
         correct_responses = 0
-        if (brightness[2]<0) {
+        if (brightness[2]<0.1) {
           brightness[2] = 0
         }
       } else if (incorrect_responses == 1) {
@@ -50,7 +50,7 @@ sim.block = function(subject, parameters, cfg) {
       unchosen  = raffle[choice != raffle]
       
       #outcome
-      if (choice == raffle[1]) {
+      if (choice == raffle[2]) {
         correct_responses = correct_responses + 1
         incorrecrt_responses = 0
       }
@@ -75,8 +75,7 @@ sim.block = function(subject, parameters, cfg) {
         correct_responses = correct_responses,
         incorrect_responses = incorrect_responses
       )
-      
-      
+
       dfnew = cbind(dfnew, brightness)
       
       #bind to the overall df

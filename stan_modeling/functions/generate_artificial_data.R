@@ -25,7 +25,12 @@ generate_artificial_data <- function(cfg) {
                                  'correct_responses',
                                  'incorrect_responses',
                                  'selected_offer',
-                                 'fold')
+                                 'fold',
+                                 'brightness1',
+                                 'brightness2'
+                                 )
   )
+  df = get_df(mydatatype = set_datatype(),path, standata = T) 
+  
   
 }
