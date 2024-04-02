@@ -5,7 +5,7 @@ source('./functions/my_starter.R')
 path = set_workingmodel()
 
 cfg = list(
-  Nsubjects        = 5,
+  Nsubjects        = 10,
   Nblocks          = 2,
   Ntrials_perblock = 50,
   Narms            = 2, #number of arms in the task
