@@ -5,9 +5,11 @@ sim.block = function(subject, parameters, cfg) {
   #pre-allocation
   #set parameters
   beta = parameters['beta']
-  # mu = parameters['mu']
-  # sigma  = parameters['sigma']
-  # tau = parameters['tau']
+  mu0 = parameters['mu0']
+  mu1 = parameters['mu1']
+  sigma  = parameters['sigma']
+  tau0 = parameters['tau0']
+  tau1 = parameters['tau1']
   
   
   #set initial var
@@ -59,6 +61,9 @@ sim.block = function(subject, parameters, cfg) {
         incorrect_responses = incorrect_responses + 1
       }
       
+      rt = rnorm(n = 1,mean = mu0 + mu1 * abs(brightness[raffle]), sd = sigma) + rexp(n = 1, rate = 1/(tau0 + tau1 * abs(brightness[raffle])))
+      
+      
       #save trial's data
       
       #create data for current trials
@@ -73,7 +78,8 @@ sim.block = function(subject, parameters, cfg) {
         offer1               = raffle[1],
         offer2               = raffle[2],
         correct_responses = correct_responses,
-        incorrect_responses = incorrect_responses
+        incorrect_responses = incorrect_responses,
+        rt = rt
       )
 
       dfnew = cbind(dfnew, brightness)

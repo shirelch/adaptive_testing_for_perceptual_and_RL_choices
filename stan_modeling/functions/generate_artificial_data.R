@@ -27,7 +27,8 @@ generate_artificial_data <- function(cfg) {
                                  'selected_offer',
                                  'fold',
                                  'brightness1',
-                                 'brightness2'
+                                 'brightness2',
+                                 'rt'
                                  )
   )
   df = get_df(mydatatype = set_datatype(),path, standata = T) 
