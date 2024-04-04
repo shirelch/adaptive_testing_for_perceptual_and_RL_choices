@@ -45,6 +45,7 @@ examine_population_parameters_recovery <- function(path, datatype) {
     samples    = data.frame(samples = unlist(samples))
     if (datatype == 'artificial') {
     true_value = model_parameters$artificial_population_location[i]
+    sample_value = mean(model_parameters$artificial_individual_parameters[,i])
     }
     else
     {
@@ -64,6 +65,10 @@ examine_population_parameters_recovery <- function(path, datatype) {
         color = "blue",
         linewidth = 1.5
       ) +
+      geom_vline(xintercept = sample_value,
+                 linetype="dotted",
+                 color = "lightblue",
+                 linewidth=1.5)+
       xlab(model_parameters$names[i]) +
       mytheme +
       
