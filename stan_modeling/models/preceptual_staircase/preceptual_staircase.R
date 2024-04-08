@@ -30,13 +30,18 @@ sim.block = function(subject, parameters, cfg) {
     for (trial in 1:Ntrials_perblock) {
       # Update staircase
       if (correct_responses == 3) {
-        brightness[2] = brightness[2] - step_size
+        brightness[2] = brightness[2] - step_size/2
+        brightness[1] = brightness[1] + step_size/2
         correct_responses = 0
-        if (brightness[2]<0.1) {
+        if (brightness[2]<0.05) {
           brightness[2] = 0
         }
       } else if (incorrect_responses == 1) {
-        brightness[2] = brightness[2] + step_size
+        brightness[2] = brightness[2] + step_size/2
+        brightness[1] = brightness[1] - step_size/2
+        if (brightness[1]<0.05) {
+          brightness[1] = 0
+        }
         incorrect_responses = 0
       }
       
@@ -73,7 +78,8 @@ sim.block = function(subject, parameters, cfg) {
         offer1               = raffle[1],
         offer2               = raffle[2],
         correct_responses = correct_responses,
-        incorrect_responses = incorrect_responses
+        incorrect_responses = incorrect_responses,
+        beta = beta
       )
 
       dfnew = cbind(dfnew, brightness)
