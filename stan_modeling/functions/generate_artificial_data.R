@@ -10,8 +10,6 @@ generate_artificial_data <- function(cfg) {
   # generate trial-by-trial data
   simulate_artifical_data(path,cfg)
   
-  df = get_df(mydatatype = set_datatype(),path, standata = F) 
-  
   # convert to format that stan likes
   simulate_convert_to_standata(path,cfg,
                                
@@ -30,7 +28,5 @@ generate_artificial_data <- function(cfg) {
                                  'brightness2'
                                  )
   )
-  df = get_df(mydatatype = set_datatype(),path, standata = T) 
-  
   
 }
