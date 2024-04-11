@@ -16,38 +16,21 @@ sim.block = function(subject,parameters,cfg){
   Qval               = as.matrix(t(rep(0.5,Narms)))
   colnames(Qval)     =sapply(1:Narms, function(n) {paste('Qbandit',n,sep="")})
 
-  expvalues          = c(0.5,0.5) #set initial probability of each choice
-  correct_responses = 0
+    correct_responses = 0
   incorrect_responses = 0
-  step_size = 0.2
+  step_size = 2
   df                 =data.frame()
-  
   
 for (block in 1:Nblocks){
   
   Qval      = as.matrix(t(rep(0.5,Narms)))
   colnames(Qval)     =sapply(1:Narms, function(n) {paste('Qbandit',n,sep="")})
   
+  reward      = as.matrix(t(rep(0,Narms)))
+  colnames(reward)     =sapply(1:Narms, function(n) {paste('reward',n,sep="")})
+  
+  
   for (trial in 1:Ntrials_perblock){
-    
-    # Update staircase
-    if (correct_responses == 3) {
-      expvalues[2] = expvalues[2] - step_size/2
-      expvalues[1] = expvalues[1] + step_size/2
-      correct_responses = 0
-      if (expvalues[2]<0.05) {
-        expvalues[2] = 0
-        expvalues[1] = 1
-      }
-    } else if (incorrect_responses == 1) {
-      expvalues[2] = expvalues[2] + step_size/2
-      expvalues[1] = expvalues[1] - step_size/2
-      if (expvalues[1]<0.05) {
-        expvalues[1] = 0
-        expvalues[2] = 1
-      }
-      incorrect_responses = 0
-    }
 
     #computer offer
     raffle    = sample(1:Narms,Nraffle,prob=rep(1/Narms,Narms)) 
@@ -58,8 +41,6 @@ for (block in 1:Nblocks){
     choice    = sample(raffle,1,prob=p)
     unchosen  = raffle[choice!=raffle]
     
-    #outcome 
-    reward = sample(0:1,1,prob=c(1-expvalues[choice],expvalues[choice]))
     #outcome
     if (choice == raffle[2]) {
       correct_responses = correct_responses + 1
@@ -70,6 +51,25 @@ for (block in 1:Nblocks){
       incorrect_responses = incorrect_responses + 1
     }
     
+    # Update staircase
+    if (correct_responses == 3) {
+      reward[2] = 0
+      reward[1] = 1
+      
+      correct_responses = 0
+      
+      
+    } else if (incorrect_responses == 1) {
+      reward[1] = 0
+      reward[2] = 1
+      
+      incorrect_responses = 0
+      
+    }
+    else {
+      reward[1] = 0
+      reward[2] = 0
+    }
     #save trial's data
     
       #create data for current trials
@@ -83,8 +83,6 @@ for (block in 1:Nblocks){
             unchosen             = unchosen,
             offer1               = raffle[1],
             offer2               = raffle[2],
-            expval_ch            = expvalues[choice],
-            expval_unch          = expvalues[raffle[choice!=raffle]],
             reward               = reward,
             correct_responses = correct_responses,
             incorrect_responses = incorrect_responses,
@@ -100,7 +98,8 @@ for (block in 1:Nblocks){
     
     
     #updating Qvalues
-    Qval[choice] = Qval[choice] + alpha*(reward - Qval[choice])
+    Qval[choice] = Qval[choice] + alpha*(reward[choice] - Qval[choice])
+    Qval[unchosen] = Qval[unchosen] + alpha*(reward[unchosen]- Qval[unchosen])
   }
 }     
   return (df)
