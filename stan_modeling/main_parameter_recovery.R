@@ -5,7 +5,7 @@ source('./functions/my_starter.R')
 path = set_workingmodel()
 
 cfg = list(
-  Nsubjects        = 200,
+  Nsubjects        = 100,
   Nblocks          = 1,
   Ntrials_perblock = 50,
   Narms            = 2, #number of arms in the task
@@ -18,22 +18,29 @@ cfg = list(
 generate_artificial_data(cfg = cfg)
 
 df = get_df(mydatatype = set_datatype(),path, standata = F) 
+
+# last_5_trials <- df %>%
+#   group_by(subject, beta) %>%
+#   arrange(desc(trial)) %>%
+#   filter(row_number() <= 5) %>%
+#   summarise(mean_brightness_diff = mean(brightness2-brightness1))
+
 last_5_trials <- df %>%
   group_by(subject, beta) %>%
   arrange(desc(trial)) %>%
   filter(row_number() <= 5) %>%
-  summarise(mean_brightness_diff = mean(brightness2-brightness1))
+  summarise(Qdiff = mean(Qbandit2-Qbandit1))
 
-plot(last_5_trials$beta, last_5_trials$mean_brightness_diff,
+plot(last_5_trials$beta, last_5_trials$Qdiff,
      xlab = "Beta",
      ylab = "Mean Brightness Diffrences in Last 5 Trials",
      main = "Beta vs. Mean Brightness Diffrences in Last 5 Trials")
 
 
-rt = hist(df$rt)
+#rt = hist(df$rt)
 
 accuracy = df%>%group_by(subject)%>%summarise(accuracy_rate = sum(selected_offer)/length(selected_offer))
-rt = df%>%group_by(subject)%>%summarise(mean_rt = mean(rt))
+#rt = df%>%group_by(subject)%>%summarise(mean_rt = mean(rt))
 
 beta = df%>%
 plot(accuracy)
