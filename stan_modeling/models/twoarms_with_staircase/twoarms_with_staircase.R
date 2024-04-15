@@ -67,8 +67,8 @@ for (block in 1:Nblocks){
       
     }
     else {
-      reward[1] = 0
-      reward[2] = 0
+      reward[1] = Qval[1]
+      reward[2] = Qval[2]
     }
     #save trial's data
     
